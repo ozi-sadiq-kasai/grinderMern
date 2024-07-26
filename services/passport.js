@@ -23,19 +23,16 @@ clientSecret:keys.googleClientSecret,
 callbackURL:'/auth/google/callback',
 proxy:true
 },
-(accessToken,refreshToken,profile,done)=>{
 
-
- User.findOne({googleId:profile.id})
- .then((existingUser)=>{
+//Google Strategy find or create new user
+async(accessToken,refreshToken,profile,done)=>{
+ const existingUser = await User.findOne({googleId:profile.id})
   if(existingUser){
-done(null,existingUser)
+   done(null,existingUser)
   }else{
-   new User({ googleId: profile.id,name:profile.displayName })
-   .save()
-   .then(user=>done(null,user))
+  const user = await new User({ googleId: profile.id,name:profile.displayName }).save()
+   done(null,user)
   }
- })
 
 // console.log('access Token',accessToken)
 // console.log('refresh Token',refreshToken)
